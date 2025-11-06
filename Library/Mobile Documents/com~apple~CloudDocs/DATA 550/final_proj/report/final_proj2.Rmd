@@ -1,0 +1,111 @@
+---
+title: "Final Project 2: R Markdown"
+author: "Mia Sumera"
+date: "`r Sys.Date()`"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r set-chunk}
+library(knitr)
+knitr::opts_chunk$set(echo = FALSE)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+```
+
+```{r here-i-am, message = FALSE}
+here::i_am("report/final_proj2.Rmd")
+```
+
+# Introduction
+
+The **Predict Students' Dropout and Academic Success** dataset from the UC Irvine Machine Learning Repository. It includes records from 4,242 Portuguese higher education students across various programs, with 36 features on demographics, socio-economic background, academic performance, and academic paths.
+
+The objective of this report is to explore factors linked to dropout and academic success through descriptive statistics and visualizations. I will investigate demographic patterns, academic performance trends, and socio-economic influence on outcomes. Additionally, I will examine the distribution of students who dropped out, remained enrolled, or graduated. 
+
+```{r load-data, results = 'hide'}
+data <- read.csv("../data.csv", sep = ";")
+
+head(data)
+
+```
+
+
+# Table 1
+```{r table-one}
+table1 <-  data |>
+  group_by(Target) |>
+  summarise(
+    N = n(),
+    'Age (mean)' = round(mean(Age.at.enrollment, na.rm = T), 1),
+    'Male (%)' = round(mean(Gender == 1, na.rm = T) * 100,1),
+    'International (%)' = round(mean(International == 1, na.rm = T) * 100, 1),
+    'Scholarship (%)' = round(mean(Scholarship.holder == 1, na.rm = T) * 100, 1),
+    'Educational Special Needs (%)' = round(mean(Educational.special.needs == 1, na.rm = T) * 100, 1),
+    'Admission Grade (mean)' = round(mean(Admission.grade, na.rm = T) / 2, 1),
+    'First Semester Grade (mean)' = round(mean(Curricular.units.1st.sem..grade., na.rm = T) / 20 * 100, 1),
+    'Second Semester Grade (mean)' = round(mean(Curricular.units.2nd.sem..grade., na.rm = T) / 20 * 100, 1)
+  )
+
+table1_new <- as.data.frame(t(table1[,-1]))
+colnames(table1_new) <- table1$Target
+
+kable(table1_new, caption = "Table 1. Student Characteristics by Academic Outcome")
+```
+
+Table 1 shows student characteristics by academic outcome (dropout, enrolled, graduate). Among 4,242 students, 1,421 dropped out, 794 remained enrolled, and 2,209 graduated. Students that dropped out were older on average (26.1 years) compared to enrolled (22.4 years) and graduated students (21.8 years). Male students made up 49.3% of those who dropped out, and 24.8% of those who graduated.
+
+Scholarship recipients were more common among graduates (37.8%) than enrolled (16.4%) and students who dropped out (9.4%). Dropout students had the lowest mean admission grades (62.5) and showed weaker performance in the first (36.3) and second semester (29.5) when compared to enrolled students (55.6, 55.6) and graduated students (63.2, 63.5). Students who graduated had the highest admission and semester grades. 
+
+# Figure 1
+```{r figure-one}
+outcome_data <- data.frame(
+  outcome = c("Dropout", "Enrolled", "Graduate"),
+  N = c(1421, 794, 2209),
+  admission_grade = c(62.5, 62.8, 64.4),
+  first_sem = c(36.3, 55.6, 63.2),
+  second_sem = c(29.5, 55.6, 63.5)
+)
+
+grade_trajectory <- outcome_data %>%
+  select(outcome, admission_grade, first_sem, second_sem) %>%
+  pivot_longer(
+    cols = c(admission_grade, first_sem, second_sem),
+    names_to = "Time",
+    values_to = "Grade") %>%
+  mutate(Time = factor(Time,
+                       levels = c("admission_grade", "first_sem", "second_sem"),
+                       labels = c("Admission", "Semester 1", "Semester 2")))
+    
+figure1 <- ggplot(grade_trajectory, aes(x= Time, y = Grade, 
+                                        group = outcome, color = outcome)) +
+  geom_line() +
+  geom_point() +
+  labs(title = "Figure 1. Academic Perfomance Trajectory by Outcome",
+       x = "Time Point",
+       y = "Average Grade (%)",
+       color = "Outcome Category") +
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold", size = 15),
+        legend.position = "right") +
+  ylim(0, 100)
+
+print(figure1)
+        
+
+
+
+```
+
+Figure 1 is a line chart showing the academic performance trajectory from admission to second semester. This shows that although students enter their programs with similar grade averages at admission, their performance differs, with those who dropped out having the sharpest decline from admission to the second semester. 
+
+
+
+
+
+
+
+
+
