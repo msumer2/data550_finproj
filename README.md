@@ -36,3 +36,11 @@ To generate figure one:
 
 - Code is located in `report/figure_one.R`
 - Referenced in chunk titled `figure-one` in `report/final_proj2.Rmd`
+
+## Package Management
+
+This project uses `renv` for package management. 
+
+- To restore packages: `make install` or `renv::restore()` in R.
+- To update packages: `renv::snapshot()` in R after updating packages.
+
