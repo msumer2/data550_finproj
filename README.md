@@ -38,7 +38,7 @@ make docker_image
 #### Windows
 ```bash
 mkdir -p report
-docker run -v "$(pwd)/report":/project/report msumer2/final_image:latest
+docker run -it -v \"$(pwd)/report":/project/report msumer2/final_image:latest
 ```
 
 ### Option 2: Build Docker Image Locally 
