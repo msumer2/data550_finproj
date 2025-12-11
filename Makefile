@@ -20,6 +20,7 @@ clean:
 	rm -f output/*.rds && rm -f report/final_report.html
 	
 ############# DOCKER RULES #############
+	# uses IMAGE = <custom_image_name> for local build example 
 IMAGE ?= msumer2/final_image:latest 
 docker_image: 
 	mkdir -p report
