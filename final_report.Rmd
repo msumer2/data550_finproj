@@ -1,0 +1,62 @@
+---
+title: "Final Report"
+author: "Mia Sumera"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r set-chunk, include = FALSE}
+library(knitr)
+knitr::opts_chunk$set(echo = FALSE)
+library(here)
+```
+
+```{r here-i-am, message = FALSE}
+here::i_am("final_report.Rmd")
+```
+
+# Introduction
+
+The **Predict Students' Dropout and Academic Success** dataset from the UC Irvine Machine Learning Repository. It includes records from 4,242 Portuguese higher education students across various programs, with 36 features on demographics, socio-economic background, academic performance, and academic paths.
+
+The objective of this report is to explore factors linked to dropout and academic success through descriptive statistics and visualizations. I will investigate demographic patterns, academic performance trends, and socio-economic influence on outcomes. Additionally, I will examine the distribution of students who dropped out, remained enrolled, or graduated. 
+
+```{r load-data, results = 'hide'}
+data <- read.csv("code/data.csv", sep = ";")
+
+head(data)
+
+```
+
+
+# Table 1
+```{r table-one}
+table1_new <- readRDS(
+  here::here("output/table1.rds")
+)
+
+kable(table1_new, caption = "Table 1. Student Characteristics by Academic Outcome")
+```
+
+Table 1 shows student characteristics by academic outcome (dropout, enrolled, graduate). Among 4,242 students, 1,421 dropped out, 794 remained enrolled, and 2,209 graduated. Students that dropped out were older on average (26.1 years) compared to enrolled (22.4 years) and graduated students (21.8 years). Male students made up 49.3% of those who dropped out, and 24.8% of those who graduated.
+
+Scholarship recipients were more common among graduates (37.8%) than enrolled (16.4%) and students who dropped out (9.4%). Dropout students had the lowest mean admission grades (62.5) and showed weaker performance in the first (36.3) and second semester (29.5) when compared to enrolled students (55.6, 55.6) and graduated students (63.2, 63.5). Students who graduated had the highest admission and semester grades. 
+
+# Figure 1
+```{r figure-one}
+figure1 <- readRDS(here::here("output/figure1.rds"))
+
+print(figure1)
+        
+```
+
+Figure 1 is a line chart showing the academic performance trajectory from admission to second semester. This shows that although students enter their programs with similar grade averages at admission, their performance differs, with those who dropped out having the sharpest decline from admission to the second semester. 
+
+
+
+
+
+
+
+
+
