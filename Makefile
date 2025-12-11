@@ -1,16 +1,27 @@
-.PHONY: install clean
+############# REPORT RULES #############
+.PHONY: install clean report docker_image
+
+report: report/final_report.html
 
 install: 
 	Rscript -e "renv::restore()"
+
+report/final_report.html: code/render_report.R final_report.Rmd \
+	output/figure1.rds output/table1.rds
+	Rscript code/render_report.R
 	
-report.html: report/final_proj2.Rmd report/figure_one.R output/table1.rds output/figure1.rds
-	Rscript report/render_report.R
+output/table1.rds: code/table_one.R code/data.csv
+	Rscript code/table_one.R
 	
-output/table1.rds: report/table_one.R data.csv
-	Rscript report/table_one.R
-	
-output/figure1.rds: report/figure_one.R data.csv
-	Rscript report/figure_one.R
+output/figure1.rds: code/figure_one.R code/data.csv
+	Rscript code/figure_one.R
 	
 clean:
-	rm -f output/*.rds && rm -f final_proj2.html
+	rm -f output/*.rds && rm -f report/final_report.html
+	
+############# DOCKER RULES #############
+IMAGE ?= msumer2/final_image:latest 
+docker_image: 
+	mkdir -p report
+	docker run -v "$$(pwd)/report":/project/report $(IMAGE)
+	
